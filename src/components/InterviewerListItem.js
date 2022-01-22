@@ -15,7 +15,7 @@ const InterviewerListItem = (props) => {
                 src={avatar}
                 alt={name}
             />
-            {name}
+            {selected ? name : null}
         </li>
     )
 }
