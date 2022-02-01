@@ -2,6 +2,9 @@ import React from 'react'
 const Show = (props) => {
 
     const { student, interviewer, onEdit, onDelete } = props;
+    if (interviewer === undefined) {
+        return null;
+    }
 
     return (
         <main className="appointment__card appointment__card--show">
