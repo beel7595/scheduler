@@ -4,6 +4,7 @@ const useVisualMode = (initial) => {
     const [mode, setMode] = useState(initial);
     const [history, setHistory] = useState([initial]);
 
+
     const transition = (newMode, replace = false) => {
 
         if (replace) {
@@ -13,7 +14,8 @@ const useVisualMode = (initial) => {
             setHistory(newHistory);
         } else {
             setMode(newMode);
-            setHistory([...history, newMode]);
+            setHistory(prev => ([...prev, newMode]))
+            // setHistory([...history, ]);
         }
     }
     const back = () => {
