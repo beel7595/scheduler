@@ -2,6 +2,7 @@ export function getAppointmentsForDay(state, day) {
 
     const { days, appointments } = state;
 
+
     const targetDay = days.find(element => {
         return element.name === day
     })
@@ -13,7 +14,6 @@ export function getAppointmentsForDay(state, day) {
     const result = targetDay.appointments.map(item => {
         return appointments[item]
     });
-
     return result;
 
 }
