@@ -43,10 +43,10 @@ function reducer(state, action) {
 }
 
 const useApplicationData = () => {
-    const GET_DAYS = "http://localhost:8001/api/days";
-    const GET_APPOINTMENTS = "http://localhost:8001/api/appointments";
-    const GET_INTERVIEWERS = "http://localhost:8001/api/interviewers";
-    const PUT_INTERVIEW = "http://localhost:8001/api/appointments/";
+    const GET_DAYS = "/api/days";
+    const GET_APPOINTMENTS = "/api/appointments";
+    const GET_INTERVIEWERS = "/api/interviewers";
+    const PUT_INTERVIEW = "/api/appointments/";
 
 
     const [state, dispatch] = useReducer(reducer, {
@@ -63,27 +63,27 @@ const useApplicationData = () => {
 
     useEffect(() => {
 
-        let exampleSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-        exampleSocket.addEventListener('open', function (event) {
-            exampleSocket.send('ping');
-        });
-        exampleSocket.addEventListener('message', function (event) {
-            const data = JSON.parse(event.data);
+        // let exampleSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+        // exampleSocket.addEventListener('open', function (event) {
+        //     exampleSocket.send('ping');
+        // });
+        // exampleSocket.addEventListener('message', function (event) {
+        //     const data = JSON.parse(event.data);
 
-            if (data.type === SET_INTERVIEW) {
-                const { interview, id } = data;
-                dispatch({ type: SET_INTERVIEW, id, interview });
-            }
-        });
+        //     if (data.type === SET_INTERVIEW) {
+        //         const { interview, id } = data;
+        //         dispatch({ type: SET_INTERVIEW, id, interview });
+        //     }
+        // });
 
         Promise.all([axios.get(GET_DAYS), axios.get(GET_APPOINTMENTS), axios.get(GET_INTERVIEWERS)])
             .then(all => {
                 const [days, appointments, interviewers] = all;
                 dispatch({ type: SET_APPLICATION_DATA, days: days.data, appointments: appointments.data, interviewers: interviewers.data });
             })
-        return () => {
-            exampleSocket.close();
-        };
+        // return () => {
+        //     exampleSocket.close();
+        // };
     }, [])
 
 
