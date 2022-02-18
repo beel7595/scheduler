@@ -62,7 +62,7 @@ const Appointment = (props) => {
     }
 
     return (
-        <article className="appointment">
+        <article data-testid="appointment" className="appointment">
             <Header time={time}></Header>
 
             {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
@@ -83,7 +83,7 @@ const Appointment = (props) => {
             )}
             {mode === SAVING && (
                 <Status
-                    message={SAVING}
+                    message={"Saving"}
                 />
             )}
             {mode === DELETEING && (

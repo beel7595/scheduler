@@ -64,40 +64,44 @@ const useApplicationData = () => {
     useEffect(() => {
 
         // let exampleSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-        // exampleSocket.addEventListener('open', function (event) {
-        //     exampleSocket.send('ping');
-        // });
-        // exampleSocket.addEventListener('message', function (event) {
-        //     const data = JSON.parse(event.data);
-
-        //     if (data.type === SET_INTERVIEW) {
-        //         const { interview, id } = data;
-        //         dispatch({ type: SET_INTERVIEW, id, interview });
-        //     }
-        // });
-
+        let exampleSocket = new WebSocket(`ws://localhost:8001`);
+        exampleSocket.addEventListener('open', function (event) {
+            exampleSocket.send('ping');
+        });
+        exampleSocket.addEventListener('message', function (event) {
+            const data = JSON.parse(event.data);
+            if (data.type === SET_INTERVIEW) {
+                const { interview, id } = data;
+                dispatch({ type: SET_INTERVIEW, id, interview });
+            }
+        });
         Promise.all([axios.get(GET_DAYS), axios.get(GET_APPOINTMENTS), axios.get(GET_INTERVIEWERS)])
             .then(all => {
                 const [days, appointments, interviewers] = all;
                 dispatch({ type: SET_APPLICATION_DATA, days: days.data, appointments: appointments.data, interviewers: interviewers.data });
             })
-        // return () => {
-        //     exampleSocket.close();
-        // };
+        return () => {
+            exampleSocket.close();
+        };
     }, [])
 
 
     async function bookInterview(id, interview) {
 
         await axios.put(PUT_INTERVIEW + id, { interview }).then(() => {
-            // dispatch({ type: SET_INTERVIEW, id, interview });
+            dispatch({ type: SET_INTERVIEW, id, interview });
+
             state.days.forEach((day, index) => {
+
                 if (day.name === state.day) {
-                    const newDay = { ...day, spots: day.spots - 1 };
+                    let spot = day.spots;
+                    if (state.appointments[id].interview == null && interview) {
+                        spot--;
+                    }
+                    const newDay = { ...day, spots: spot };
                     const newDays = [...state.days];
                     newDays[index] = newDay;
                     dispatch({ type: SET_DAYS_SPOTS, newDays });
-
                 }
             })
         })
@@ -106,17 +110,21 @@ const useApplicationData = () => {
     async function cancelInterview(id) {
 
         await axios.delete(PUT_INTERVIEW + id).then(() => {
-            // dispatch({ type: SET_INTERVIEW, id, interview: null });
+            dispatch({ type: SET_INTERVIEW, id, interview: null });
+
             state.days.forEach((day, index) => {
+
                 if (day.name === state.day) {
-                    const newDay = { ...day, spots: day.spots + 1 };
+                    let spot = day.spots;
+                    spot++;
+                    const newDay = { ...day, spots: spot };
                     const newDays = [...state.days];
                     newDays[index] = newDay;
                     dispatch({ type: SET_DAYS_SPOTS, newDays });
-
                 }
             })
         })
+
     }
 
     return { state, setDay, bookInterview, cancelInterview }
